@@ -12,11 +12,17 @@ public class Game {
 	 */
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
+		
 		// Variable Spieler 
-		// oder Spiel mit KI Auswahl ob random oder minimax
-		Map<String, Player> players = createPlayers(scan, 2);
+		int playerCount = setPlayerCount(scan);
+		Map<String, Player> players = createPlayers(scan, playerCount);
+		
 		// Abfrage nach Feldgroesse
-		Board board = new Board();
+		int boardSize = setBoardSize(scan);
+		Board board = new Board(boardSize);
+				
+		// oder Spiel mit KI Auswahl ob random oder minimax
+		
 		Player currPlayer = players.get("p1");
 		while (true) {
 			board.printBoard();
@@ -82,6 +88,28 @@ public class Game {
 		System.out.println("---------------------------------------------------------------");
 
 		return players;
+	}
+	/**
+	 * sets the number of players
+	 * @param scan - input scanner
+	 * @return number of players
+	 */
+	private static int setPlayerCount(Scanner scan) {
+		
+		System.out.println("Wieviele Spieler gibt es?\nAnzahl:\n");
+		String count = scan.next();
+		return Integer.valueOf(count);
+	}
+	/**
+	 * sets the size of the board
+	 * @param scan - input scanner
+	 * @return size of the board
+	 */
+	private static int setBoardSize(Scanner scan) {
+		
+		System.out.println("Wie groß soll das Feld sein?\nGröße:\n");
+		String size = scan.next();
+		return Integer.valueOf(size);
 	}
 
 }

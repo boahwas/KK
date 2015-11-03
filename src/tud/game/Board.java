@@ -16,7 +16,8 @@ public class Board {
 	/**
 	 * game board representation multiple array
 	 */
-	String[][] board = new String[fieldLen * 2 + 1][];
+	//String[][] board = new String[fieldLen * 2 + 1][];
+	String[][] board;
 	/**
 	 * length of longest position number, e.g. position 123 length = 3
 	 */
@@ -31,6 +32,16 @@ public class Board {
 	List<Position> positions = new ArrayList<Position>();
 
 	public Board() {
+		init();
+	}
+	
+	/**
+	 * Constructor with arbitrary size
+	 * @param size - Size of Board
+	 */
+	public Board(int size) {
+		this.fieldLen = size;
+		board = new String[fieldLen * 2 + 1][];
 		init();
 	}
 	/**
