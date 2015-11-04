@@ -81,6 +81,31 @@ public class Board {
 	}
 	
 	/**
+	 * returns allPossibleMoves of Board
+	 */
+	public List<Integer> getPossibleMoves(){
+		List<Integer> moves = new ArrayList<Integer>();
+		for(int i = 0; i < board.length; i++){
+			for(int j = 0; j < board[i].length; j++){
+				if (i % 2 == 0) {
+					if (j % 2 == 1) {
+						if(!board[i][j].startsWith("-")){
+							moves.add(Integer.valueOf(board[i][j]));
+						}
+					}
+				}else
+				{
+					if (j % 2 == 0) {
+						if(!board[i][j].startsWith("|")){
+							moves.add(Integer.valueOf(board[i][j]));
+						}
+					} 
+				}
+			}
+		}
+		return moves;
+	}
+	/**
 	 * prints the board onto the console
 	 */
 	public void printBoard() {
