@@ -84,7 +84,7 @@ public class Game {
 			turn = String.valueOf(mini.findMove(currPlayer, nextPlayer(players, currPlayer), board, System.nanoTime()));
 			}
 		else{
-			System.out.println("Für einen Tipp (t) eingeben");
+			System.out.println("Fï¿½r einen Tipp (t) eingeben");
 			turn = scan.next();
 			// Wenn Spieler dran ist, abfragen ob er hilfe betaetigt hat.
 			while (!turn.matches("[1-9][0-9]*") || !board.checkRules(Integer.valueOf(turn))) {
@@ -125,6 +125,7 @@ public class Game {
 	 * @param scan - input scanner
 	 * @param board - reference of the game board
 	 * @return a map of the players
+	 * @author Daniel Strippel, Philip Stauder
 	 */
 	static Map<String, Player> createKIGame(Scanner scan, Board board, boolean easy) {
 		Map<String, Player> players = new HashMap<String, Player>();
@@ -152,6 +153,7 @@ public class Game {
 	 * sets the number of players
 	 * @param scan - input scanner
 	 * @return number of players
+	 * @author Philip Stauder
 	 */
 	private static int setPlayerCount(Scanner scan) {
 		
@@ -163,6 +165,7 @@ public class Game {
 	 * sets the size of the board
 	 * @param scan - input scanner
 	 * @return size of the board
+	 * @author Philip Stauder
 	 */
 	private static int setBoardSize(Scanner scan) {
 		
@@ -171,6 +174,12 @@ public class Game {
 		return Integer.valueOf(size);
 	}
 	
+	/**
+	 * Set the game mode (ki, kiHard, multiplayer)
+	 * @param scan - input scanner
+	 * @return mod game modus
+	 * @author Daniel Strippel, Philip Stauder
+	 */
 	private static Modus setModus(Scanner scan){
 		
 		System.out.println("Wollen sie gegen den Computer spielen?(j/n)");
