@@ -105,6 +105,26 @@ public class Board {
 		}
 		return moves;
 	}
+	/*
+	 * Gets a Copy of the actual board
+	 */
+	public Board getBoardCopy(){
+		Board aboard = new Board(this.fieldLen);
+		String[][] newboard = new String[fieldLen * 2 + 1][];
+		for (int i = 0; i < board.length; i++) {
+			newboard[i] = new String[fieldLen * 2 + 1];
+
+		}
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				newboard[i][j] = String.valueOf(this.board[i][j]);
+			}
+		}
+		
+		aboard.positions.addAll(positions);
+		aboard.board = newboard;
+		return aboard;
+	}
 	/**
 	 * prints the board onto the console
 	 */
