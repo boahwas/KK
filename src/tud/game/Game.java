@@ -12,6 +12,7 @@ public class Game {
 	 */
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
+		
 		Modus modus;
 		Map<String, Player> players;
 		
@@ -20,12 +21,17 @@ public class Game {
 		Board board = new Board(boardSize);
 		
 		KI ki = new KI(board);
+		MiniMax mini = new MiniMax(Integer.MAX_VALUE, Integer.MAX_VALUE);
 		
 		// oder Spiel mit KI Auswahl ob random oder minimax
+		
 		modus = setModus(scan);
 		
 		if(modus == Modus.KI){
-			players = createKIGame(scan, board);
+			players = createKIGame(scan, board, true);
+		}
+		if(modus == Modus.KIHARD){
+			players = createKIGame(scan, board, false);
 		}
 		else{
 		// Variable Spieler 
@@ -37,7 +43,7 @@ public class Game {
 		while (true) {
 			board.printBoard();
 			System.out.println("It is your turn " + currPlayer.getName() + "(" + currPlayer.getPlayerName() + "):");
-			String turn = checkTurn(scan, board, currPlayer, ki);
+			String turn = checkTurn(scan, board, currPlayer, ki, mini, players);
 			if (board.nextAction(Integer.valueOf(turn), currPlayer.getPlayerName()).equals(Action.NextTurn)) {
 				currPlayer = nextPlayer(players, currPlayer);
 			}
@@ -67,18 +73,26 @@ public class Game {
 	 * @param currPlayer - current player
 	 * @return valid turn
 	 */
-	private static String checkTurn(Scanner scan, Board board, Player currPlayer, KI ki) {
+	private static String checkTurn(Scanner scan, Board board, Player currPlayer, KI ki, MiniMax mini, Map<String,Player> players) {
 		
 		String turn;
 		if(currPlayer.getName().equals("kiGegner")){
 			ki.updateBoard();
 			turn = ki.randomMove().toString();
 		}
+		if(currPlayer.getName().equals("HardKiGegner")){
+			turn = String.valueOf(mini.findMove(currPlayer, nextPlayer(players, currPlayer), board, System.nanoTime()));
+			}
 		else{
+			System.out.println("Für einen Tipp (t) eingeben");
 			turn = scan.next();
 			// Wenn Spieler dran ist, abfragen ob er hilfe betaetigt hat.
 			while (!turn.matches("[1-9][0-9]*") || !board.checkRules(Integer.valueOf(turn))) {
-				System.out.println("Your turn is not valid! Please make another.");
+				if(turn.equals("t")){
+					System.out.println(mini.findMove(currPlayer, nextPlayer(players, currPlayer), board, System.nanoTime()));
+				}else{
+					System.out.println("Your turn is not valid! Please make another.");
+				}
 				turn = scan.next();
 			}
 		}
@@ -112,7 +126,7 @@ public class Game {
 	 * @param board - reference of the game board
 	 * @return a map of the players
 	 */
-	static Map<String, Player> createKIGame(Scanner scan, Board board) {
+	static Map<String, Player> createKIGame(Scanner scan, Board board, boolean easy) {
 		Map<String, Player> players = new HashMap<String, Player>();
 		
 			System.out.println("Player what is your name?");
@@ -121,8 +135,13 @@ public class Game {
 			Player p = new Player(pstr);
 			players.put(p.getPlayerName(), p);
 			System.out.println("Welcome " + pstr);
-			
-			Player kiPlayer= new Player("kiGegner");
+			Player kiPlayer;
+			if(easy){
+				kiPlayer= new Player("kiGegner");
+			}
+			else{
+				kiPlayer= new Player("HardKiGegner");
+			}
 			players.put(kiPlayer.getPlayerName(), kiPlayer);
 
 		System.out.println("---------------------------------------------------------------");
@@ -161,7 +180,17 @@ public class Game {
 			m = scan.next();
 		}
 		Modus mod = (m.equals("j"))?Modus.KI:Modus.MULTIPLAYER;
-			
+		if(mod.equals(Modus.KI)){
+			System.out.println("Einfach oder schwer (e/s)");
+			m = scan.next();
+			while(!m.equals("e") && !m.equals("s")){
+				System.out.println("Falsche Eingabe! Bitte mit (j) oder (n) antworten.");
+				m = scan.next();
+			}
+			if(m.equals("s")){
+				mod = Modus.KIHARD;
+			}
+		}
 		return mod;
 	}
 

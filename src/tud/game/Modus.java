@@ -1,5 +1,5 @@
 package tud.game;
 
 public enum Modus {
-	KI,MULTIPLAYER
+	KI,MULTIPLAYER, KIHARD
 }

@@ -9,7 +9,7 @@ public class MiniMax {
 	private Player maxPlayer;
 	private Player minPlayer;
 	private Board board;
-	private static final int MAX_DEPTH = 1;
+	private static final int MAX_DEPTH = 4;
 	
 	private long moveCalculationStartedAt;
 	
@@ -22,7 +22,6 @@ public class MiniMax {
 	}
 	
 	public int findMove(Player player, Player opponent, Board newboard, long moveCalculationStartedAt){
-		System.out.println("find move");
 		int takeThisMove = 0;
 		this.moveCalculationStartedAt = moveCalculationStartedAt;
 		maxPlayer = player;
@@ -39,7 +38,6 @@ public class MiniMax {
 			
 			Board newBoard = board.getBoardCopy();
 			updateBoard(m, newBoard, maxPlayer);
-			//newBoard.printBoard();
 			
 			v = MinValue(newBoard, Double.NEGATIVE_INFINITY,
 					Double.POSITIVE_INFINITY, MAX_DEPTH - 1);
@@ -53,7 +51,6 @@ public class MiniMax {
 	
 	public void updateBoard(int m, Board b, Player p) {
 		b.nextAction(m, p.getName());
-		//b.printBoard();
 	}
 	
 	private double MinValue(Board b, double alpha, double beta, int d) {
@@ -72,15 +69,14 @@ public class MiniMax {
 			}
 			Board newBoard = board.getBoardCopy();
 			updateBoard(m, newBoard, minPlayer);
-			newBoard.printBoard();
-			/*
+			
 			v = Math.min(v, MaxValue(newBoard, alpha, beta, d - 1));
 			if (v <= alpha) {
 				return v;
 			}
 			beta = Math.min(beta, v);
-		*/}
-		return v = 0;
+		}
+		return v;
 	}
 	
 	private double MaxValue(Board b, double alpha, double beta, int d) {
