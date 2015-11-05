@@ -3,6 +3,11 @@ package tud.game;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * 
+ * @author Philip Stauder
+ *
+ */
 public class KI{
 	
 	/**

@@ -1,7 +1,8 @@
 package tud.game;
 
 /**
- * @author 
+ * 
+ * @author Philip Stauder
  *
  */
 public enum Modus {

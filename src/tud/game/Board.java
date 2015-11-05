@@ -38,6 +38,7 @@ public class Board {
 	/**
 	 * Constructor with arbitrary size
 	 * @param size - Size of Board
+	 * @author Philip Stauder
 	 */
 	public Board(int size) {
 		this.fieldLen = size;

@@ -22,8 +22,6 @@ public class MiniMax {
 	 */
 	public int findMove(Player player, Player opponent, Board newboard) {
 		int takeThisMove = 0;
-		maxPlayer = player;
-		minPlayer = opponent;
 		this.b = newboard.getBoardCopy();
 		double valueOfBestMove = Double.NEGATIVE_INFINITY;
 		double v = 0;
