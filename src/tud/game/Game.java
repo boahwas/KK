@@ -21,7 +21,7 @@ public class Game {
 		Board board = new Board(boardSize);
 		
 		KI ki = new KI(board);
-		MiniMax mini = new MiniMax(Integer.MAX_VALUE, Integer.MAX_VALUE);
+		MiniMax mini = new MiniMax();
 		
 		// oder Spiel mit KI Auswahl ob random oder minimax
 		
@@ -29,16 +29,16 @@ public class Game {
 		
 		if(modus == Modus.KI){
 			players = createKIGame(scan, board, true);
-		}
-		if(modus == Modus.KIHARD){
-			players = createKIGame(scan, board, false);
-		}
-		else{
-		// Variable Spieler 
+		}else{
+			if(modus == Modus.KIHARD){
+				players = createKIGame(scan, board, false);
+			}
+			else{
+			// Variable Spieler 
 			int playerCount = setPlayerCount(scan);
 			players = createPlayers(scan, playerCount);
+			}
 		}
-		
 		Player currPlayer = players.get("p1");
 		while (true) {
 			board.printBoard();
@@ -81,15 +81,20 @@ public class Game {
 			turn = ki.randomMove().toString();
 		}
 		if(currPlayer.getName().equals("HardKiGegner")){
-			turn = String.valueOf(mini.findMove(currPlayer, nextPlayer(players, currPlayer), board, System.nanoTime()));
+			turn = String.valueOf(mini.findMove(currPlayer, nextPlayer(players, currPlayer), board));
 			}
 		else{
-			System.out.println("Für einen Tipp (t) eingeben");
+			if(containsCom(players))
+			{
+				System.out.println("Für einen Tipp (t) eingeben");
+			}
 			turn = scan.next();
 			// Wenn Spieler dran ist, abfragen ob er hilfe betaetigt hat.
 			while (!turn.matches("[1-9][0-9]*") || !board.checkRules(Integer.valueOf(turn))) {
-				if(turn.equals("t")){
-					System.out.println(mini.findMove(currPlayer, nextPlayer(players, currPlayer), board, System.nanoTime()));
+				if(containsCom(players)){
+					if(turn.equals("t")){
+						System.out.println(mini.findMove(currPlayer, nextPlayer(players, currPlayer), board));
+					}
 				}else{
 					System.out.println("Your turn is not valid! Please make another.");
 				}
@@ -97,6 +102,20 @@ public class Game {
 			}
 		}
 		return turn;
+	}
+	
+	/**
+	 * checks for com players
+	 * @param players
+	 * @return boolean if ki contains players
+	 */
+	static boolean containsCom(Map<String, Player> players){
+		for(Player p: players.values()){
+			if(p.getName().equals("kiGegner") || p.getName().equals("HardKiGegner")){
+				return true;
+			}
+		}
+		return false;
 	}
 	/**
 	 * creates players and asks for their names
@@ -166,7 +185,7 @@ public class Game {
 	 */
 	private static int setBoardSize(Scanner scan) {
 		
-		System.out.println("Wie groï¿½ soll das Feld sein?\nGrï¿½ï¿½e:\n");
+		System.out.println("Wie große soll das Feld sein?\nGröße:\n");
 		String size = scan.next();
 		return Integer.valueOf(size);
 	}

@@ -1,46 +1,38 @@
 package tud.game;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+/**
+ * @author Daniel Strippel
+ *
+ */
 public class MiniMax {
-	
-	private Player maxPlayer;
-	private Player minPlayer;
-	private Board board;
-	private static final int MAX_DEPTH = 4;
-	
-	private long moveCalculationStartedAt;
-	
-	private final int maxDurationForMoveInMilliSeconds;
-	private final int maxDurationForAllMovesInMilliSeconds;
-	
-	public MiniMax(int m1, int m2) {
-		maxDurationForMoveInMilliSeconds = m1;
-		maxDurationForAllMovesInMilliSeconds = m2;
+
+	private Board b;
+	private static final int MAX_DEPTH = 3;
+
+	public MiniMax() {
+
 	}
-	
-	public int findMove(Player player, Player opponent, Board newboard, long moveCalculationStartedAt){
+
+	/**
+	 * Returns the Best Move with MiniMax
+	 * @param player - currentPlayer
+	 * @param opponent - nextPlayer
+	 * @param newboard - Board
+	 * @return nextMove
+	 */
+	public int findMove(Player player, Player opponent, Board newboard) {
 		int takeThisMove = 0;
-		this.moveCalculationStartedAt = moveCalculationStartedAt;
 		maxPlayer = player;
 		minPlayer = opponent;
-		this.board = newboard.getBoardCopy();
+		this.b = newboard.getBoardCopy();
 		double valueOfBestMove = Double.NEGATIVE_INFINITY;
 		double v = 0;
-		for (int m : board.getPossibleMoves()){
-			long elapsedTime = System.nanoTime() - moveCalculationStartedAt;
-			double millseconds = (double) elapsedTime / 1000000.0;
-			if (millseconds > maxDurationForAllMovesInMilliSeconds) {
-				break;
-			}
-			
-			Board newBoard = board.getBoardCopy();
-			updateBoard(m, newBoard, maxPlayer);
-			
-			v = MinValue(newBoard, Double.NEGATIVE_INFINITY,
-					Double.POSITIVE_INFINITY, MAX_DEPTH - 1);
+		for (int m : b.getPossibleMoves()) {
+
+			Board newBoard = b.getBoardCopy();
+			b.nextAction(m, "");
+
+			v = MinValue(newBoard, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, MAX_DEPTH - 1);
 			if (v >= valueOfBestMove) {
 				valueOfBestMove = v;
 				takeThisMove = m;
@@ -48,28 +40,28 @@ public class MiniMax {
 		}
 		return takeThisMove;
 	}
-	
-	public void updateBoard(int m, Board b, Player p) {
-		b.nextAction(m, p.getName());
-	}
-	
+
+	/**
+	 * min of MiniMax
+	 * @param b
+	 * @param alpha 
+	 * @param beta
+	 * @param d
+	 * @return best score of minplayer
+	 */
 	private double MinValue(Board b, double alpha, double beta, int d) {
 		if (d < 1) {
-			return scoreHeuristically(b);
+			return scoreHeuristically(b, d);
 		}
 
 		double v = Double.POSITIVE_INFINITY;
 		Board board = b.getBoardCopy();
 
 		for (int m : board.getPossibleMoves()) {
-			long elapsedTime = System.nanoTime() - moveCalculationStartedAt;
-			double millseconds = (double) elapsedTime / 1000000.0;
-			if (millseconds > maxDurationForMoveInMilliSeconds) {
-				break;
-			}
+
 			Board newBoard = board.getBoardCopy();
-			updateBoard(m, newBoard, minPlayer);
-			
+			b.nextAction(m, "");
+
 			v = Math.min(v, MaxValue(newBoard, alpha, beta, d - 1));
 			if (v <= alpha) {
 				return v;
@@ -78,23 +70,27 @@ public class MiniMax {
 		}
 		return v;
 	}
-	
+
+	/**
+	 * max of MiniMax
+	 * @param b
+	 * @param alpha
+	 * @param beta
+	 * @param d
+	 * @return best score of maxplayer
+	 */
 	private double MaxValue(Board b, double alpha, double beta, int d) {
 		if (d < 1) {
-			return scoreHeuristically(b);
+			return scoreHeuristically(b, d);
 		}
 
 		double v = Double.NEGATIVE_INFINITY;
 		Board board = b.getBoardCopy();
 
 		for (int m : board.getPossibleMoves()) {
-			long elapsedTime = System.nanoTime() - moveCalculationStartedAt;
-			double millseconds = (double) elapsedTime / 1000000.0;
-			if (millseconds > maxDurationForMoveInMilliSeconds) {
-				break;
-			}
+
 			Board newBoard = board.getBoardCopy();
-			updateBoard(m, newBoard, maxPlayer);
+			b.nextAction(m, "");
 			v = Math.max(v, MinValue(newBoard, alpha, beta, d - 1));
 			if (v >= beta) {
 				return v;
@@ -103,18 +99,46 @@ public class MiniMax {
 		}
 		return v;
 	}
-	
-	public int scoreHeuristically(Board b) {
+
+	/**
+	 * Scores the Board
+	 * @param b
+	 * @param d
+	 * @return score of Board
+	 */
+	public int scoreHeuristically(Board b, int d) {
 		int score = 0;
-		List<Integer> moves = b.getPossibleMoves();
-		for(int m: moves){
-			if(!b.nextAction(m, "1").equals(Action.Again)){
-				score = score + 12;
+		for (int i = 0; i < b.board.length; i++) {
+			for (int j = 0; j < b.board[i].length; j++) {
+				if (i % 2 == 0) {
+				} else {
+					if (j > 0 && j < b.fieldLen * 2) {
+						if (b.board[i][j].equals(" ")) {
+							score = checktoclose(b, i, j) * d;
+							break;
+						}
+					}
+				}
 			}
 		}
-		Random r = new Random();
-		score = r.nextInt(32);
-		return score; 
+		return score;
 	}
-	
+
+	/**
+	 * checks of board if 3 lines are set    
+	 * @param b
+	 * @param i
+	 * @param j
+	 * @return score
+	 */
+	private int checktoclose(Board b, int i, int j) {
+		if (b.board[i - 1][j].equals("-") && b.board[i + 1][j].equals("-") && b.board[i][j + 1].equals("|")
+				|| b.board[i][j + 1].equals("|") && b.board[i + 1][j].equals("-") && b.board[i][j - 1].equals("|")
+				|| b.board[i + 1][j].equals("-") && b.board[i][j - 1].equals("|") && b.board[i - 1][j].equals("-")
+				|| b.board[i][j - 1].equals("|") && b.board[i - 1][j].equals("-") && b.board[i][j + 1].equals("|")) {
+			return 1000;
+		}
+		return 0;
+	}
+
 }
