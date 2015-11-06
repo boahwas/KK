@@ -79,10 +79,9 @@ public class Game {
 		if(currPlayer.getName().equals("kiGegner")){
 			ki.updateBoard();
 			turn = ki.randomMove().toString();
-		}
-		if(currPlayer.getName().equals("HardKiGegner")){
+		}else if(currPlayer.getName().equals("HardKiGegner")){
 			turn = String.valueOf(mini.findMove(currPlayer, nextPlayer(players, currPlayer), board));
-			}
+		}
 		else{
 			if(containsCom(players))
 			{
